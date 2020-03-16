@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Dosis&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&display=swap');
+$primary: #0a161f;
+$secondary: #947966;
+$light: #fef6fb;
+
+html {
+  font-family: 'Playfair Display', serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: $primary;
+  background-color: $light;
+  font-size: 20px;
+}
+
+h1,
+h2,
+h3,
+h4,
+.title {
+  font-family: 'Dosis', sans-serif;
+}
+
+#nav {
+  padding: 15px;
+  font-size: 1.2rem;
+
+  a {
+    font-weight: bold;
+    color: $primary;
+
+    &.router-link-exact-active {
+      color: $secondary;
+    }
+  }
+}
+
+a {
+  font-family: 'Dosis', sans-serif;
+  font-weight: bold;
+  color: $primary;
+}
