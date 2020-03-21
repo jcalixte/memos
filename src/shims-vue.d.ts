@@ -4,3 +4,4 @@ declare module '*.vue' {
 }
 
 declare module 'markdownparser'
+declare module 'mapbox-gl/dist/mapbox-gl'
