@@ -39,10 +39,7 @@ export default class EarthMap extends Vue {
     ])
 
     markers.forEach((marker) => {
-      const el = document.createElement('i')
-      el.classList.add('marker', 'gg-pin-alt')
-
-      new mapboxgl.Marker(el).setLngLat(marker).addTo(this.earth)
+      new mapboxgl.Marker().setLngLat(marker).addTo(this.earth)
     })
   }
 
