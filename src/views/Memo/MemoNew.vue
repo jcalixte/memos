@@ -3,9 +3,10 @@
     memo new form
     <form @submit.prevent="submit">
       <div class="main">
+        <button type="submit">save</button>
         <p>
           <label for="title">Titre</label>
-          <input id="title" name="title" type="text" />
+          <input id="title" name="title" type="text" v-model="title" />
         </p>
         <p>
           <label for="date">Date</label>
@@ -60,14 +61,15 @@ import Markdown from 'markdownparser'
 
 import { memoService } from '@/services/memo.service'
 import { Location } from '@/models/Location'
+import { CoverPicture } from '@/models/CoverPicture'
+import { Picture } from '@/models/Picture'
 import { toDateString } from '@/utils/date'
+import {
+  getCoverPictureFromFile,
+  getPictureFromFile
+} from '@/utils/picture-utils'
 
 import EarthMap from '@/components/EarthMap.vue'
-
-interface Picture {
-  objectUrl: string
-  file: File
-}
 
 @Component({
   components: {
@@ -80,7 +82,7 @@ export default class MemoNew extends Vue {
   private date: string = toDateString(new Date())
   private location: Location = { lng: 0, lat: 0 }
   private quill: Quill | null = null
-  private coverPicture: Picture | null = null
+  private coverPicture: CoverPicture | null = null
   private pictures: Picture[] = []
 
   private mounted() {
@@ -110,29 +112,28 @@ export default class MemoNew extends Vue {
     const target = event.target as HTMLInputElement
     if (target.files) {
       this.clearPictures(this.coverPicture)
-      const file = target.files[0]
-      this.coverPicture = {
-        objectUrl: URL.createObjectURL(file),
-        file
-      }
+      this.coverPicture = getCoverPictureFromFile(target.files[0])
     }
   }
 
-  private previewPictures(event: Event) {
+  private async previewPictures(event: Event) {
     const target = event.target as HTMLInputElement
     if (target.files) {
       this.clearPictures(...this.pictures)
       this.pictures = []
+      const pictures = this.pictures
       for (const file of target.files) {
-        this.pictures.push({
-          objectUrl: URL.createObjectURL(file),
-          file
-        })
+        try {
+          const picture: Picture = await getPictureFromFile(file)
+          pictures.push(picture)
+        } catch (error) {
+          console.warn(error)
+        }
       }
     }
   }
 
-  private clearPictures(...pictures: Array<Picture | null>) {
+  private clearPictures(...pictures: Array<CoverPicture | null>) {
     pictures.forEach((picture) => {
       if (picture) {
         URL.revokeObjectURL(picture.objectUrl)
@@ -145,8 +146,11 @@ export default class MemoNew extends Vue {
       title: this.title,
       content: this.content,
       date: new Date(this.date),
-      location: this.location
+      location: this.location,
+      coverPicture: this.coverPicture,
+      pictures: this.pictures
     })
+    this.$router.push({ name: 'memo-list' })
   }
 
   private updateContent() {
