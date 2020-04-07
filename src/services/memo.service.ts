@@ -59,6 +59,10 @@ class MemoService {
       }))
     }
   }
+
+  public async remove(id: string): Promise<boolean> {
+    return await repository.remove(id)
+  }
 }
 
 export const memoService = new MemoService()

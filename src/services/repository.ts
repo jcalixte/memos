@@ -50,6 +50,18 @@ class Repository {
       return false
     }
   }
+
+  public async remove(id: string) {
+    try {
+      const doc = await this.db.get<Model>(id)
+      doc._deleted = true
+      await this.db.put(doc)
+      return true
+    } catch (error) {
+      console.error(error)
+      return false
+    }
+  }
 }
 
 export const repository = new Repository()
